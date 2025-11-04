@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Proxy API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .error { background-color: #ffebee; }
+        .success { background-color: #e8f5e8; }
+        .info { background-color: #e3f2fd; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Proxy API - RindeBus</h1>
+    
+    <div>
+        <h3>📤 Subir Imagen de Prueba</h3>
+        <form id="testForm">
+            <input type="file" id="imageInput" accept="image/*" required>
+            <br><br>
+            <button type="submit">Enviar al Proxy</button>
+        </form>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        function addResult(message, type = 'info') {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            resultsDiv.insertBefore(resultDiv, resultsDiv.firstChild);
+        }
+        
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('imageInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                addResult('❌ Por favor selecciona un archivo', 'error');
+                return;
+            }
+            
+            addResult(`📤 Enviando archivo: ${file.name} (${(file.size/1024).toFixed(2)} KB)`, 'info');
+            
+            try {
+                const formData = new FormData();
+                formData.append('imagen', file);
+                
+                addResult('🔄 Enviando petición al proxy...', 'info');
+                
+                const response = await fetch('/api/planillas/', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                addResult(`📡 Respuesta del proxy: ${response.status} ${response.statusText}`, 
+                         response.ok ? 'success' : 'error');
+                
+                const result = await response.json();
+                addResult(`📄 Datos recibidos: <pre>${JSON.stringify(result, null, 2)}</pre>`, 
+                         response.ok ? 'success' : 'error');
+                
+            } catch (error) {
+                addResult(`❌ Error: ${error.message}`, 'error');
+            }
+        });
+        
+        // Info inicial
+        addResult('✅ Página de prueba cargada correctamente', 'success');
+        addResult(`🌐 URL actual: ${window.location.href}`, 'info');
+    </script>
+</body>
+</html>
