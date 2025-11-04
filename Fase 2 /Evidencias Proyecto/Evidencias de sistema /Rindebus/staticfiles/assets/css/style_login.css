@@ -1,0 +1,362 @@
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+:root{
+    --primary-color: #003E84;
+    --secondary-color: #FFFFFF;
+    --tertiary-color:  #F5C303;
+}
+
+body {
+background-color: var(--primary-color);
+    display: flex;
+    flex-direction: column;     /* Apila header y login */
+    align-items: center;        /* Centra horizontalmente */
+    min-height: 100vh;
+    gap: vh;                   /* Espacio entre header y login */
+    /* quitamos justify-content: center; para que el header quede arriba */
+} 
+
+.header_login{
+    width: 100%;                /* Ocupa todo el ancho */
+    height: 72px;
+    color: var(--secondary-color);
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+
+.fecha_login{
+    width: 13.875rem;
+    height: 1.375rem;
+    font-size: 20px;
+    margin-top: 1.5625rem; 
+    font-family: poppins, sans-serif; 
+    font-weight: 800;
+    margin-right: 25px;
+}
+
+.login{
+    width: 40.625rem;
+    height: 48.125rem;
+    border-radius: 15px;
+    background-color: var(--secondary-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0;                /* Antes: 44px */
+    margin: auto 0;
+}
+.contenedor_logo_login{
+    display: flex;
+    gap: 41px;
+    width: 100%;
+    margin-bottom: 44px;
+}
+.logo_login_rindebus{
+    width: 162px;    /* Ancho deseado */
+    height: 162px;
+    
+}
+.caja_login{
+    display: flex;
+    flex-direction: column;
+    gap: 41px;
+    padding: 0 9.5rem;
+    margin-bottom: 0;
+}
+
+.titulo_login{
+    width: 15.1875rem;
+    height: 3.3125rem;
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin:8.4375rem 0 0 0;
+    text-align: center;
+    font-family: poppins, sans-serif;
+    font-weight: 800;
+
+}
+
+.form_login{
+    display: flex;
+    flex-direction: column;
+    width: 21.5625rem;
+    gap: 43px;
+    box-sizing: content-box;
+    
+}
+
+.input{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: poppins, sans-serif;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+.input label {
+    font-size: 1rem;
+    color: var(--primary-color);
+}
+
+.input.error input {
+    border-color: #e74c3c;
+    background-color: #fdf2f2;
+}
+
+.input.error label {
+    color: #e74c3c;
+}
+
+#usuario, #contrasena{
+    height: 3.0625rem;
+    border: 1px solid var(--primary-color);
+    border-radius: 15px;
+    background-color: #E5E5E5;
+    padding-left: 10px;
+    font-size: 1rem;
+    color: var(--primary-color);
+    font-family: poppins, sans-serif;
+    font-weight: 400;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#usuario:focus, #contrasena:focus {
+    outline: none;
+    border-color: var(--tertiary-color);
+    background-color: #ffffff;
+}
+
+#ingresar{
+    width: 70%;
+    max-width: 180px;
+    height: 55px;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 15px;
+    color: var(--tertiary-color);
+    font-size: 1.25rem;
+    font-family: poppins, sans-serif;
+    font-weight: 800;
+    text-align: center;
+    line-height: 3.0625rem;
+    text-decoration: none;
+    align-self: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#ingresar:hover {
+    background-color: #002a5c;
+    transform: translateY(-2px);
+}
+
+#ingresar:active {
+    transform: translateY(0);
+}
+
+#ingresar.loading {
+    background-color: #666;
+    cursor: not-allowed;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    font-size: 1.2rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.contenedor_logo_interbus{
+    margin-top: 0;
+}
+
+.logo_interbus{
+    width: 185px;    /* Ancho deseado */
+    height: 185px;
+    display: block;        /* Necesario para que margin funcione completo */
+    margin: 0 auto; 
+}
+.version{
+    font-family: poppins, sans-serif; 
+    font-weight: 800;
+    font-size: 18px;
+    color: black;
+    text-align: center;
+    margin-top: 10px;
+}
+footer{
+    width: 100%;
+    height: 50px;
+    background-color: var(--primary-color);
+    color: var(--tertiary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: poppins, sans-serif; 
+    font-weight: 400;
+    margin-top: 2.5rem;
+}
+
+/* Media Queries para Responsividad */
+
+/* Dispositivos móviles y tablets pequeñas (400px - 768px) */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .header_login {
+        height: 60px;
+        justify-content: center;
+    }
+
+    .fecha_login {
+        font-size: 16px;
+        margin-top: 1rem;
+        margin-right: 0;
+        text-align: center;
+        width: auto;
+    }
+
+    .login {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        min-height: 500px;
+        padding: 2rem 1rem;
+        margin: 0;
+    }
+
+    .contenedor_logo_login {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .logo_login_rindebus {
+        width: 120px;
+        height: 120px;
+    }
+
+    .titulo_login {
+        width: auto;
+        height: auto;
+        font-size: 2rem;
+        margin: 0;
+        text-align: center;
+    }
+
+    .caja_login {
+        padding: 0 1rem;
+        gap: 30px;
+    }
+
+    .form_login {
+        width: 100%;
+        gap: 25px;
+    }
+
+    #usuario, #contrasena {
+        height: 2.5rem;
+        font-size: 0.9rem;
+    }
+
+    #ingresar {
+        width: 60%;
+        max-width: 160px;
+        height: 45px;
+        font-size: 1rem;
+    }
+
+    .contenedor_logo_interbus {
+        margin-top: 20px;
+    }
+
+    .logo_interbus {
+        width: 120px;
+        height: 120px;
+    }
+
+    .version {
+        font-size: 16px;
+    }
+
+    footer {
+        height: 40px;
+        font-size: 0.8rem;
+        margin-top: 1.5rem;
+    }
+}
+
+/* Dispositivos muy pequeños (400px - 480px) */
+@media (max-width: 480px) {
+    .login {
+        max-width: 350px;
+        padding: 1.5rem 0.8rem;
+    }
+
+    .titulo_login {
+        font-size: 1.8rem;
+    }
+
+    .logo_login_rindebus {
+        width: 100px;
+        height: 100px;
+    }
+
+    .logo_interbus {
+        width: 100px;
+        height: 100px;
+    }
+
+    .caja_login {
+        padding: 0 0.8rem;
+    }
+
+    #ingresar {
+        width: 55%;
+        max-width: 140px;
+        font-size: 0.9rem;
+        height: 40px;
+    }
+
+    .fecha_login {
+        font-size: 14px;
+    }
+}
+
+/* Dispositivos medianos (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .login {
+        width: 35rem;
+        height: 45rem;
+    }
+
+    .caja_login {
+        padding: 0 7rem;
+    }
+
+    .logo_login_rindebus {
+        width: 140px;
+        height: 140px;
+    }
+
+    .logo_interbus {
+        width: 160px;
+        height: 160px;
+    }
+}
