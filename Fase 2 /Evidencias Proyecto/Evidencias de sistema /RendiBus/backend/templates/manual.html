@@ -1,0 +1,734 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-cl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'assets/css/style_manual_clean.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <title>RendiBus - Planilla Manual</title>
+</head>
+<body>
+    <main class="contenido_principal">
+        <header class="header_main">
+            <nav class="navbar">
+                <div class="nav_left">
+                    <button class="btn_back" title="Volver al menú principal" onclick="goBack()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 12H5" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 19L5 12L12 5" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    
+                    <div class="logo_container">
+                        <img class="logo_nav" src="{% static 'assets/img/Logo_InterBus-SinFondo.png' %}" alt="Logo InterBus">
+                    </div>
+                </div>
+
+                <h1 class="titulo_vista">Planilla Manual</h1>
+
+                <button class="btn_logout" title="Cerrar sesión" onclick="logout()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 17L21 12L16 7" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12H9" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </nav>
+        </header>
+
+        
+        <div class="hero_section">
+            <h2 class="form-title">Formulario Planilla Manual</h2>
+            <form class="planilla_form" id="form-planilla" autocomplete="off" novalidate>
+                {% csrf_token %}
+
+                <div class="planilla_grid">
+                    <fieldset class="card planilla_card">
+                        <h3>Datos Planilla</h3>
+                        <div class="two-cols">
+                            <div class="col">
+                                <label>Nro. Planilla<input name="nro_planilla" type="number" placeholder="Ingrese el número de planilla"></label>
+                                <label>Origen<input name="origen" type="text" placeholder="ej: Santiago"></label>
+                                <label>Retorno<input name="retorno" type="text" placeholder="ej: Valparaíso"></label>
+                                <label>Cod Conductor<input name="cod_conductor" type="number" placeholder="Ingrese código del conductor"></label>
+                                <label>Cod Asistente<input name="cod_asistente" type="number" placeholder="Código del asistente (opcional)"></label>
+                                <label>Fecha<input name="fecha" type="date"></label>
+                            </div>
+                            <div class="col">
+                                <label>Nro Bus<input name="nro_bus" type="number" placeholder="Ej: 45, 70, 710, 1400"></label>
+                                <label>Horario Origen<input name="h_origen" type="time"></label>
+                                <label>Horario Retorno<input name="h_retorno" type="time"></label>
+                                <label>Conductor<input name="conductor" type="text" readonly placeholder="Se llenará automáticamente"></label>
+                                <label>Asistente<input name="asistente" type="text" readonly placeholder="Se llenará automáticamente"></label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="card ingresos_card">
+                        <h3>Ingresos y Egresos</h3>
+                        <div class="two-cols">
+                            <div class="col">
+                                <label>Ingreso Total Ruta
+                                    <div class="input-group">
+                                        <span class="currency-prefix">$</span>
+                                        <input name="ing_total_ruta" type="number" step="0.01" placeholder="0">
+                                    </div>
+                                </label>
+                                <label>Ingreso Total Oficina
+                                    <div class="input-group">
+                                        <span class="currency-prefix">$</span>
+                                        <input name="ing_total_oficina" type="number" step="0.01" placeholder="0">
+                                    </div>
+                                </label>
+                                <label>Total Ingresos
+                                    <input name="total_ingresos" type="text" readonly class="input-currency-readonly" placeholder="$0" value="$0">
+                                    <input name="total_ingresos_raw" type="hidden">
+                                </label>
+                            </div>
+
+                            <div class="col">
+                                <label>Viáticos
+                                    <div class="input-group">
+                                        <span class="currency-prefix">$</span>
+                                        <input name="viaticos" type="number" step="0.01" placeholder="0">
+                                    </div>
+                                </label>
+                                <label>Losa
+                                    <div class="input-group">
+                                        <span class="currency-prefix">$</span>
+                                        <input name="losa" type="number" step="0.01" placeholder="0">
+                                    </div>
+                                </label>
+                                <label>Pensión
+                                    <div class="input-group">
+                                        <span class="currency-prefix">$</span>
+                                        <input name="pension" type="number" step="0.01" placeholder="0">
+                                    </div>
+                                </label>
+                                <label>Cena
+                                    <div class="input-group">
+                                        <span class="currency-prefix">$</span>
+                                        <input name="cena" type="number" step="0.01" placeholder="0">
+                                    </div>
+                                </label>
+                                <label>Otros
+                                    <div class="input-group">
+                                        <span class="currency-prefix">$</span>
+                                        <input name="otros" type="number" step="0.01" placeholder="0">
+                                    </div>
+                                </label>
+                                <label>Total Egresos
+                                    <input name="total_egresos" type="text" readonly class="input-currency-readonly" placeholder="$0" value="$0">
+                                    <input name="total_egresos_raw" type="hidden">
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="card footer_inputs">
+                        <h3>Resumen</h3>
+                        <div class="resumen-grid">
+                            <div class="resumen-row">
+                                <span class="row-label">Tarifas Ruta:</span>
+                                <input name="tarifa_1" type="text" placeholder="1">
+                                <input name="tarifa_2" type="text" placeholder="2">
+                                <input name="tarifa_3" type="text" placeholder="3">
+                                <input name="tarifa_4" type="text" placeholder="4">
+                                <input name="tarifa_5" type="text" placeholder="5">
+                                <input name="tarifa_6" type="text" placeholder="6">
+                                <input name="tarifa_7" type="text" placeholder="7">
+                            </div>
+                            <div class="resumen-row">
+                                <span class="row-label">Ticket Final Ruta:</span>
+                                <input name="ticket_1" type="text" placeholder="1">
+                                <input name="ticket_2" type="text" placeholder="2">
+                                <input name="ticket_3" type="text" placeholder="3">
+                                <input name="ticket_4" type="text" placeholder="4">
+                                <input name="ticket_5" type="text" placeholder="5">
+                                <input name="ticket_6" type="text" placeholder="6">
+                                <input name="ticket_7" type="text" placeholder="7">
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer_main">
+        <div class="footer_container">
+            <button class="feature_card btn-enviar" onclick="enviarPlanilla()" onKeyDown="handleKeyPress(event, 'upload')">
+                <div class="feature_icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17 8l-5-5-5 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 3v14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="feature_label">Enviar Planilla</span>
+            </button>
+
+            <button class="feature_card btn-volver" onclick="goBack()" onKeyDown="handleKeyPress(event, 'back')">
+                <div class="feature_icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 18l-6-6 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <span class="feature_label">Volver al Menú</span>
+            </button>
+        </div>
+        
+        <div class="footer_copyright">
+            <p>© 2025 RendiBus. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript externo para búsqueda de empleados -->
+    <script src="{% static 'assets/js/empleados_busqueda.js' %}?v=2.2"></script>
+    
+    <!-- Script para cargar datos extraídos desde localStorage -->
+    <script>
+        // Función para mostrar notificaciones elegantes
+        function mostrarNotificacionElegante(mensaje, tipo = 'info', duracion = 4000) {
+            // Crear elemento de notificación
+            const notificacion = document.createElement('div');
+            notificacion.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                min-width: 300px;
+                max-width: 450px;
+                padding: 16px 20px;
+                border-radius: 12px;
+                color: white;
+                font-weight: 500;
+                font-size: 14px;
+                line-height: 1.4;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                transform: translateX(100%);
+                transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            `;
+            
+            // Configurar colores según tipo
+            const colores = {
+                success: 'linear-gradient(135deg, #00b894, #00a085)',
+                error: 'linear-gradient(135deg, #e17055, #d63031)',
+                info: 'linear-gradient(135deg, #0984e3, #006ba6)',
+                warning: 'linear-gradient(135deg, #fdcb6e, #f39c12)'
+            };
+            
+            notificacion.style.background = colores[tipo] || colores.info;
+            notificacion.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="flex-shrink: 0; font-size: 18px;">
+                        ${tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : 'ℹ️'}
+                    </div>
+                    <div style="flex: 1;">${mensaje}</div>
+                    <button onclick="this.parentNode.parentNode.remove()" style="
+                        background: none; 
+                        border: none; 
+                        color: white; 
+                        font-size: 16px; 
+                        cursor: pointer; 
+                        opacity: 0.7;
+                        transition: opacity 0.2s;
+                        padding: 4px;
+                        line-height: 1;
+                    " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(notificacion);
+            
+            // Animar entrada
+            setTimeout(() => {
+                notificacion.style.transform = 'translateX(0)';
+            }, 50);
+            
+            // Auto-eliminar
+            setTimeout(() => {
+                notificacion.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notificacion.parentNode) {
+                        notificacion.parentNode.removeChild(notificacion);
+                    }
+                }, 300);
+            }, duracion);
+        }
+
+        // Auto-llenado desde localStorage
+    // Cargar datos extraídos desde localStorage al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Función para obtener datos de Azure OCR
+        async function obtenerDatosDeAzure(planillaId, intentoActual = 0, maxIntentos = 10) {
+            // Usar la URL base actual (funciona con localhost y ngrok)
+            const baseUrl = window.location.origin;
+            const azureUrl = `${baseUrl}/api/planillas/${planillaId}/datos_extraidos/`;
+            console.log(`🔍 Intento ${intentoActual + 1}/${maxIntentos}: Consultando Azure OCR...`);
+            console.log(`📍 URL: ${azureUrl}`);
+            
+            try {
+                const response = await fetch(azureUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    signal: AbortSignal.timeout(30000) // 30 segundos
+                });
+                
+                if (response.ok) {
+                    const datosData = await response.json();
+                    console.log('✅ Datos extraídos de Azure:', datosData);
+                    
+                    // Guardar en localStorage para referencia futura
+                    localStorage.setItem('datosExtraidos', JSON.stringify(datosData));
+                    localStorage.setItem('planillaId', planillaId);
+                    localStorage.removeItem('planillaIdPendiente');
+                    
+                    // Ejecutar auto-llenado
+                    const imagenNombre = localStorage.getItem('imagenNombre');
+                    ejecutarAutoLlenado(JSON.stringify(datosData), imagenNombre, planillaId);
+                    
+                } else if (response.status === 404 && intentoActual < maxIntentos - 1) {
+                    // Azure aún está procesando, reintentar
+                    console.log('⏳ Azure OCR aún procesando, reintentando en 2 segundos...');
+                    setTimeout(() => obtenerDatosDeAzure(planillaId, intentoActual + 1, maxIntentos), 2000);
+                    
+                } else {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error obteniendo datos de Azure:', error);
+                
+                if (intentoActual < maxIntentos - 1) {
+                    console.log('⚠️ Reintentando en 2 segundos...');
+                    setTimeout(() => obtenerDatosDeAzure(planillaId, intentoActual + 1, maxIntentos), 2000);
+                } else {
+                    console.error('❌ Se agotaron los intentos para obtener datos de Azure');
+                    localStorage.removeItem('planillaIdPendiente');
+                    alert('No se pudieron obtener los datos extraídos. Por favor, ingrese los datos manualmente.');
+                }
+            }
+        }
+        
+        // Verificar si hay un planilla_id pendiente
+        const planillaIdPendiente = localStorage.getItem('planillaIdPendiente');
+        const tiempoOCR = localStorage.getItem('tiempoOCR');
+        
+        console.log('🔍 Verificando localStorage:');
+        console.log('  - planillaIdPendiente:', planillaIdPendiente);
+        console.log('  - tiempoOCR:', tiempoOCR);
+        console.log('  - imagenNombre:', localStorage.getItem('imagenNombre'));
+        
+        if (planillaIdPendiente && tiempoOCR) {
+            // Validar que no hayan pasado más de 10 minutos
+            const tiempoTranscurrido = Date.now() - Number.parseInt(tiempoOCR);
+            const TIEMPO_LIMITE_MS = 10 * 60 * 1000; // 10 minutos
+            
+            if (tiempoTranscurrido > TIEMPO_LIMITE_MS) {
+                console.log('⏰ La solicitud OCR es muy antigua (>10 min), limpiando...');
+                localStorage.removeItem('planillaIdPendiente');
+                localStorage.removeItem('imagenNombre');
+                localStorage.removeItem('tiempoOCR');
+            } else {
+                console.log('🚀 Detectado planilla_id pendiente, iniciando GET de datos...');
+                obtenerDatosDeAzure(planillaIdPendiente);
+            }
+        } else {
+            console.log('ℹ️ No hay planilla pendiente de procesar');
+        }
+    });
+    
+    // Función para ejecutar el auto-llenado
+    globalThis.ejecutarAutoLlenado = function ejecutarAutoLlenado(datosExtraidos, imagenNombre, planillaId) {
+        if (window.autoLlenadoEjecutado) {
+            return;
+        }
+        window.autoLlenadoEjecutado = true;
+        
+        try {
+            const datos = JSON.parse(datosExtraidos);
+            const datosReales = datos.datos_extraidos;
+            if (!datosReales) {
+                return;
+            }
+            
+            // 🔍 DEBUG TEMPORAL: Mostrar campos recibidos
+            const camposRecibidos = {
+                fecha: datosReales.fecha,
+                nro_bus: datosReales.numero_bus,
+                nro_planilla: datosReales.numero_planilla,
+                cod_conductor: datosReales.codigo_conductor,
+                cod_asistente: datosReales.codigo_asistente
+            };
+            console.log('📋 Campos principales recibidos:', camposRecibidos);
+            
+            let camposLlenados = 0;
+            
+            // Función helper para llenar campo y contar
+            function llenarCampo(valorAzure, nombreCampo, etiqueta) {
+                if (valorAzure) {
+                    const campo = document.querySelector(`input[name="${nombreCampo}"]`);
+                    if (campo) {
+                        campo.value = valorAzure;
+                        camposLlenados++;
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            // Llenar campos automáticamente usando los nombres exactos de Azure OCR
+                
+                // Campos principales
+                llenarCampo(datosReales.numero_planilla, 'nro_planilla', 'Nro. Planilla');
+                llenarCampo(datosReales.codigo_origen, 'origen', 'Origen');
+                llenarCampo(datosReales.codigo_retorno, 'retorno', 'Retorno');
+                llenarCampo(datosReales.numero_bus, 'nro_bus', 'Nro. Bus');
+                llenarCampo(datosReales.horario_origen, 'h_origen', 'Horario Origen');
+                llenarCampo(datosReales.horario_retorno, 'h_retorno', 'Horario Retorno');
+                
+                // Fecha - convertir DD-MM-YYYY a YYYY-MM-DD
+                if (datosReales.fecha) {
+                    const campo = document.querySelector('input[name="fecha"]');
+                    console.log('📅 Campo fecha encontrado:', !!campo);
+                    console.log('📅 Fecha de Azure:', datosReales.fecha);
+                    console.log('📅 Tipo de dato:', typeof datosReales.fecha);
+                    
+                    if (campo) {
+                        let fechaStr = String(datosReales.fecha).trim();
+                        
+                        // Si viene DD-MM-YYYY, convertir a YYYY-MM-DD
+                        if (fechaStr.includes('-')) {
+                            const partes = fechaStr.split('-');
+                            if (partes.length === 3) {
+                                const dia = partes[0];
+                                const mes = partes[1];
+                                const anio = partes[2];
+                                fechaStr = `${anio}-${mes}-${dia}`;
+                                console.log('📅 Fecha convertida:', fechaStr);
+                            }
+                        }
+                        
+                        campo.value = fechaStr;
+                        console.log('📅 Valor asignado al campo:', campo.value);
+                        campo.dispatchEvent(new Event('input', { bubbles: true }));
+                        campo.dispatchEvent(new Event('change', { bubbles: true }));
+                        camposLlenados++;
+                    } else {
+                        console.error('❌ Campo fecha NO encontrado');
+                    }
+                }
+                
+                // Códigos de empleados (con delay para búsqueda de nombres)
+                if (datosReales.codigo_conductor) {
+                    const campo = document.querySelector('input[name="cod_conductor"]');
+                    if (campo) {
+                        campo.value = datosReales.codigo_conductor;
+                        camposLlenados++;
+                        // Disparar eventos después de 1 segundo para asegurar que los listeners estén listos
+                        setTimeout(() => {
+                            campo.focus();
+                            campo.dispatchEvent(new Event('input', { bubbles: true }));
+                            campo.dispatchEvent(new Event('change', { bubbles: true }));
+                            campo.dispatchEvent(new Event('blur', { bubbles: true }));
+                            console.log('🔄 Eventos disparados para conductor:', datosReales.codigo_conductor);
+                        }, 1000);
+                    }
+                }
+                
+                if (datosReales.codigo_asistente) {
+                    const campo = document.querySelector('input[name="cod_asistente"]');
+                    if (campo) {
+                        campo.value = datosReales.codigo_asistente;
+                        camposLlenados++;
+                        // Disparar eventos después de 1.2 segundos
+                        setTimeout(() => {
+                            campo.focus();
+                            campo.dispatchEvent(new Event('input', { bubbles: true }));
+                            campo.dispatchEvent(new Event('change', { bubbles: true }));
+                            campo.dispatchEvent(new Event('blur', { bubbles: true }));
+                            console.log('🔄 Eventos disparados para asistente:', datosReales.codigo_asistente);
+                        }, 1200);
+                    }
+                }
+                
+                // Ingresos
+                if (datosReales.total_ingreso_ruta) {
+                    const campo = document.querySelector('input[name="ing_total_ruta"]');
+                    if (campo) {
+                        campo.value = datosReales.total_ingreso_ruta;
+                        camposLlenados++;
+                    }
+                }
+                
+                if (datosReales.total_ingreso_oficina) {
+                    const campo = document.querySelector('input[name="ing_total_oficina"]');
+                    if (campo) {
+                        campo.value = datosReales.total_ingreso_oficina;
+                        camposLlenados++;
+                    }
+                }
+                
+                // 🔍 DEBUG: Ver todos los campos disponibles en datosReales
+                console.log('📋 TODOS LOS CAMPOS OCR DETECTADOS:', Object.keys(datosReales));
+                console.log('💰 DATOS EGRESOS COMPLETOS:', {
+                    viaticos: datosReales.viaticos,
+                    total_viaticos: datosReales.total_viaticos,
+                    losa: datosReales.losa,
+                    total_losa: datosReales.total_losa,
+                    pension: datosReales.pension,
+                    total_pension: datosReales.total_pension,
+                    cena: datosReales.cena,
+                    total_cena: datosReales.total_cena,
+                    otros: datosReales.otros,
+                    otros_gastos: datosReales.otros_gastos,
+                    total_otros: datosReales.total_otros,
+                    total_otros_gastos: datosReales.total_otros_gastos
+                });
+
+                // Egresos - mapeo amplio para cubrir variaciones de nombres
+                const mapeoEgresos = {
+                    // Variaciones para viaticos
+                    'viaticos': 'viaticos',
+                    'total_viaticos': 'viaticos',
+                    'viatico': 'viaticos',
+                    
+                    // Variaciones para losa
+                    'losa': 'losa',
+                    'total_losa': 'losa',
+                    
+                    // Variaciones para pension
+                    'pension': 'pension',
+                    'total_pension': 'pension',
+                    
+                    // Variaciones para cena
+                    'cena': 'cena',
+                    'total_cena': 'cena',
+                    
+                    // Variaciones para otros gastos
+                    'otros': 'otros',
+                    'otros_gastos': 'otros',
+                    'total_otros': 'otros',
+                    'total_otros_gastos': 'otros'
+                };
+                
+                for (const [campoAzure, campoForm] of Object.entries(mapeoEgresos)) {
+                    if (datosReales[campoAzure]) {
+                        const campo = document.querySelector(`input[name="${campoForm}"]`);
+                        if (campo) {
+                            console.log(`✅ Llenando egreso: ${campoAzure} (${datosReales[campoAzure]}) -> ${campoForm}`);
+                            campo.value = datosReales[campoAzure];
+                            camposLlenados++;
+                        } else {
+                            console.log(`❌ Campo ${campoForm} no encontrado en DOM`);
+                        }
+                    }
+                }
+                
+                // Mostrar resumen de egresos detectados
+                const egresosDetectados = Object.keys(mapeoEgresos).filter(k => datosReales[k]);
+                if (egresosDetectados.length > 0) {
+                    console.log(`💰 EGRESOS DETECTADOS: ${egresosDetectados.join(', ')}`);
+                } else {
+                    console.log('⚠️ NO SE DETECTARON EGRESOS en los datos OCR');
+                }
+                
+                // Tarifas
+                const tarifas = ['tarifa_1', 'tarifa_2', 'tarifa_3', 'tarifa_4', 'tarifa_5', 'tarifa_6'];
+                tarifas.forEach((tarifa) => {
+                    if (datosReales[tarifa]) {
+                        const campo = document.querySelector(`input[name="${tarifa}"]`);
+                        if (campo) {
+                            campo.value = datosReales[tarifa];
+                            camposLlenados++;
+                        }
+                    }
+                });
+                
+                // Tickets (B_final -> ticket_)
+                const tickets = [
+                    {azure: 'b_final_1', form: 'ticket_1'},
+                    {azure: 'b_final_2', form: 'ticket_2'},
+                    {azure: 'b_final_3', form: 'ticket_3'},
+                    {azure: 'b_final_4', form: 'ticket_4'},
+                    {azure: 'b_final_5', form: 'ticket_5'},
+                    {azure: 'b_final_6', form: 'ticket_6'}
+                ];
+                tickets.forEach((ticket) => {
+                    if (datosReales[ticket.azure]) {
+                        const campo = document.querySelector(`input[name="${ticket.form}"]`);
+                        if (campo) {
+                            campo.value = datosReales[ticket.azure];
+                            camposLlenados++;
+                        }
+                    }
+                });
+                
+                // Auto-llenado completo
+                
+                // Activar cálculos y búsquedas (los empleados ya están cargados)
+                setTimeout(() => {
+                    // Activar cálculo de totales
+                    if (globalThis.calcularTotales) {
+                        globalThis.calcularTotales();
+                    }
+                    
+                    // Buscar empleados (ya están cargados)
+                    if (datosReales.codigo_conductor && globalThis.empleadosCache) {
+                        buscarYMostrarEmpleado(datosReales.codigo_conductor, 'conductor');
+                    }
+                    
+                    if (datosReales.codigo_asistente && globalThis.empleadosCache) {
+                        buscarYMostrarEmpleado(datosReales.codigo_asistente, 'asistente');
+                    }
+                    
+                    // Disparar eventos para activar calculadoras
+                    const camposParaEventos = [
+                        'ing_total_ruta', 'ing_total_oficina', 
+                        'viaticos', 'losa', 'pension', 'cena', 'otros'
+                    ];
+                    
+                    camposParaEventos.forEach(nombreCampo => {
+                        const campo = document.querySelector(`input[name="${nombreCampo}"]`);
+                        if (campo && campo.value) {
+                            campo.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    });
+                    
+                    // ⭐ ACTIVAR VALIDACIÓN AUTOMÁTICA para campos críticos
+                    const camposValidacion = ['origen', 'retorno', 'nro_bus'];
+                    
+                    camposValidacion.forEach(nombreCampo => {
+                        const campo = document.querySelector(`input[name="${nombreCampo}"]`);
+                        if (campo && campo.value && campo.value.trim() !== '') {
+                            console.log(`🔄 Activando validación automática para: ${nombreCampo} = "${campo.value}"`);
+                            
+                            // Disparar eventos de input y blur para activar validación
+                            campo.dispatchEvent(new Event('input', { bubbles: true }));
+                            campo.dispatchEvent(new Event('blur', { bubbles: true }));
+                            
+                            // Aplicar focus y blur físico para garantizar validación
+                            setTimeout(() => {
+                                campo.focus();
+                                setTimeout(() => {
+                                    campo.blur();
+                                }, 100);
+                            }, 200 + (camposValidacion.indexOf(nombreCampo) * 100));
+                        }
+                    });
+                    
+                    // Mostrar notificación elegante al usuario
+                    if (camposLlenados > 0) {
+                        mostrarNotificacionElegante(
+                            `✅ Auto-llenado completado: ${camposLlenados} campos actualizados con validación automática`,
+                            'success'
+                        );
+                        
+                        // 🧹 LIMPIAR localStorage después del auto-llenado exitoso
+                        console.log('🧹 Limpiando datos OCR del localStorage...');
+                        localStorage.removeItem('datosExtraidos');
+                        localStorage.removeItem('imagenNombre');
+                        localStorage.removeItem('planillaId');
+                        console.log('✅ localStorage limpiado exitosamente');
+                    }
+                    
+                }, 200); // Breve delay para asegurar que todo esté listo
+                
+            } catch (error) {
+                console.error('❌ Error procesando datos OCR:', error);
+            }
+        }
+    
+    // Función para buscar y mostrar empleado en el formulario
+    function buscarYMostrarEmpleado(codigo, tipo) {
+        if (!globalThis.empleadosCache || !globalThis.empleadosCache.loaded) {
+            return;
+        }
+        
+        const cache = tipo === 'conductor' ? globalThis.empleadosCache.conductores : globalThis.empleadosCache.asistentes;
+        const empleado = cache[String(codigo)] || cache[Number(codigo)];
+        
+        if (empleado) {
+            const nombreCampo = tipo === 'conductor' ? 'conductor' : 'asistente';
+            const campoNombre = document.querySelector(`input[name="${nombreCampo}"]`);
+            
+            if (campoNombre) {
+                campoNombre.value = empleado.nombre_completo;
+                campoNombre.style.backgroundColor = '#e8f5e8';
+            }
+        }
+    }
+    
+    // 🧹 Función para limpiar localStorage manualmente
+    globalThis.limpiarDatosOCR = function() {
+        const datosExtraidos = localStorage.getItem('datosExtraidos');
+        if (datosExtraidos) {
+            localStorage.removeItem('datosExtraidos');
+            localStorage.removeItem('imagenNombre');
+            localStorage.removeItem('planillaId');
+            localStorage.removeItem('tiempoOCR');
+            console.log('🧹 Datos OCR limpiados manualmente');
+            mostrarNotificacionElegante('🧹 Datos OCR anteriores eliminados', 'info', 3000);
+        } else {
+            console.log('ℹ️ No hay datos OCR para limpiar');
+            mostrarNotificacionElegante('ℹ️ No hay datos OCR almacenados', 'info', 3000);
+        }
+    };
+    
+    // 🔍 Función de debug para verificar localStorage
+    globalThis.debugOCR = function() {
+        const datosExtraidos = localStorage.getItem('datosExtraidos');
+        const tiempoOCR = localStorage.getItem('tiempoOCR');
+        const imagenNombre = localStorage.getItem('imagenNombre');
+        
+        console.log('🔍 ESTADO DEL LOCALSTORAGE OCR:');
+        console.log('- Datos extraídos:', !!datosExtraidos);
+        console.log('- Imagen nombre:', imagenNombre);
+        console.log('- Tiempo OCR:', tiempoOCR);
+        
+        if (tiempoOCR) {
+            const tiempoTranscurrido = Date.now() - Number.parseInt(tiempoOCR);
+            console.log(`- Tiempo transcurrido: ${Math.round(tiempoTranscurrido/1000)} segundos`);
+            console.log(`- Es válido: ${tiempoTranscurrido < (10 * 60 * 1000) ? 'SÍ' : 'NO (>10 min)'}`);
+        }
+        
+        return { datosExtraidos: !!datosExtraidos, tiempoOCR, imagenNombre };
+    };
+    </script>
+    
+    <!-- Funciones auxiliares para navegación -->
+    <script>
+    function goBack() {
+        window.location.href = '/';
+    }
+    
+    function logout() {
+        if (confirm('¿Está seguro de que desea cerrar sesión?')) {
+            window.location.href = '/logout/';
+        }
+    }
+    
+    function handleKeyPress(event, action) {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            if (action === 'upload') {
+                enviarPlanilla();
+            } else if (action === 'back') {
+                history.back();
+            }
+        }
+    }
+    </script>
+
+
+</body>
+</html>

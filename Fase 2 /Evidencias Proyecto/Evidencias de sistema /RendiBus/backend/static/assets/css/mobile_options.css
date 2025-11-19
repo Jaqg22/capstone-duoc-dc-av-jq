@@ -1,0 +1,161 @@
+/* =========================================
+   MOBILE OPTIONS STYLES
+   ========================================= */
+
+.mobile-options-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 10000 !important;
+    animation: fadeIn 0.3s ease-in-out !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.options-container {
+    background: white !important;
+    padding: 30px !important;
+    border-radius: 15px !important;
+    text-align: center !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    animation: slideUp 0.3s ease-out !important;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.options-container h3 {
+    margin-bottom: 20px !important;
+    color: #333 !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+}
+
+.option-button {
+    display: block !important;
+    width: 100% !important;
+    padding: 15px !important;
+    margin-bottom: 15px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    text-align: center !important;
+    line-height: 1.3 !important;
+}
+
+.option-button small {
+    display: block !important;
+    font-size: 12px !important;
+    margin-top: 5px !important;
+    opacity: 0.8 !important;
+    font-weight: 400 !important;
+}
+
+.option-button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.option-button:active {
+    transform: translateY(0) !important;
+}
+
+.option-button.google-lens {
+    background: #4285f4 !important;
+    color: white !important;
+}
+
+.option-button.google-lens:hover {
+    background: #3367d6 !important;
+}
+
+.option-button.native-camera {
+    background: #34a853 !important;
+    color: white !important;
+}
+
+.option-button.native-camera:hover {
+    background: #2d7d32 !important;
+}
+
+.option-button.web-camera {
+    background: #ea4335 !important;
+    color: white !important;
+}
+
+.option-button.web-camera:hover {
+    background: #d23f31 !important;
+}
+
+.option-button.cancel {
+    background: #f1f3f4 !important;
+    color: #333 !important;
+    padding: 10px !important;
+    font-size: 14px !important;
+    margin-bottom: 0 !important;
+}
+
+.option-button.cancel:hover {
+    background: #e8eaed !important;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 480px) {
+    .options-container {
+        padding: 20px !important;
+        margin: 20px !important;
+        border-radius: 10px !important;
+    }
+    
+    .option-button {
+        padding: 12px !important;
+        font-size: 15px !important;
+    }
+    
+    .options-container h3 {
+        font-size: 16px !important;
+    }
+}
+
+/* Para dispositivos muy pequeños */
+@media (max-width: 360px) {
+    .options-container {
+        padding: 15px !important;
+        margin: 15px !important;
+    }
+    
+    .option-button {
+        padding: 10px !important;
+        font-size: 14px !important;
+        margin-bottom: 10px !important;
+    }
+}

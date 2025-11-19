@@ -1,0 +1,25 @@
+# Backend Django para RindeBus - Detección de Documentos con ML Kit
+# Instalación automática de dependencias
+
+# Framework Django
+Django==4.2.7
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+
+# Google ML Kit y Computer Vision
+google-cloud-documentai==2.20.1
+google-cloud-vision==3.4.4
+firebase-admin==6.2.0
+
+# Procesamiento de imágenes
+Pillow==10.0.1
+numpy==1.24.3
+opencv-python==4.8.1.78
+
+# Base de datos y utilidades
+python-dotenv==1.0.0
+whitenoise==6.6.0
+psycopg2-binary==2.9.9
+
+# Para desarrollo
+django-extensions==3.2.3

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'assets/css/style_consultas.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <title>RendiBus - Consultas y Dashboard</title>
+</head>
+<body>
+    <main class="contenido_principal">
+        <header class="header_main">
+            <nav class="navbar">
+                <div class="nav_left">
+                    <button class="btn_back" title="Volver al menú principal" onclick="goBack()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 12H5" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 19L5 12L12 5" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    
+                    <div class="logo_container">
+                        <img class="logo_nav" src="{% static 'assets/img/Logo_InterBus-SinFondo.png' %}" alt="Logo InterBus">
+                    </div>
+                </div>
+
+                <h1 class="titulo_vista">Dashboard y Consultas</h1>
+
+                <button class="btn_logout" title="Cerrar sesión" onclick="logout()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 17L21 12L16 7" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12H9" stroke="#003E84" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Filtros de Consulta -->
+        <section class="filtros_section">
+            <div class="filtros_container">
+                <h2>🔍 Filtros de Consulta</h2>
+                <div class="filtros_grid">
+                    <div class="filtro_grupo">
+                        <label>Fecha Desde:</label>
+                        <input type="date" id="fecha-desde" name="fecha_desde">
+                    </div>
+                    <div class="filtro_grupo">
+                        <label>Fecha Hasta:</label>
+                        <input type="date" id="fecha-hasta" name="fecha_hasta">
+                    </div>
+                    <div class="filtro_grupo">
+                        <label>Conductor:</label>
+                        <select id="conductor-filter" name="conductor">
+                            <option value="">Todos los conductores</option>
+                        </select>
+                    </div>
+                    <div class="filtro_grupo">
+                        <label>Bus:</label>
+                        <select id="bus-filter" name="bus">
+                            <option value="">Todos los buses</option>
+                        </select>
+                    </div>
+                    <div class="filtro_grupo">
+                        <label>Ciudad:</label>
+                        <select id="ciudad-filter" name="ciudad">
+                            <option value="">Todas las ciudades</option>
+                        </select>
+                    </div>
+                    <div class="filtro_acciones">
+                        <button class="btn_filtrar" onclick="aplicarFiltros()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11" cy="11" r="8" stroke="white" stroke-width="2"/>
+                                <path d="m21 21l-4.35-4.35" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Filtrar
+                        </button>
+                        <button class="btn_limpiar" onclick="limpiarFiltros()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 6h18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="m19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard de Gráficos -->
+        <section class="dashboard_section">
+            <div class="dashboard_container">
+                <h2>📊 Dashboard</h2>
+                <div class="graficos_grid">
+                    <!-- Gráfico 1: Ingresos por Período -->
+                    <div class="grafico_card">
+                        <h3>💰 Ingresos por Período</h3>
+                        <div class="chart_container">
+                            <canvas id="ingresosPeriodoChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico 2: Top Conductores -->
+                    <div class="grafico_card">
+                        <h3>🏆 Top Conductores por Productividad</h3>
+                        <div class="chart_container">
+                            <canvas id="topConductoresChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico 3: Producción por Bus -->
+                    <div class="grafico_card">
+                        <h3>🚌 Producción por Bus</h3>
+                        <div class="chart_container">
+                            <canvas id="utilizacionBusesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico 4: Producción por Ruta -->
+                    <div class="grafico_card">
+                        <h3>🗺️ Producción por Ruta</h3>
+                        <div class="chart_container">
+                            <canvas id="rutasChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Métricas Resumen -->
+                <div class="metricas_grid">
+                    <div class="metrica_card">
+                        <div class="metrica_icon">💵</div>
+                        <div class="metrica_content">
+                            <h4>Total Ingresos</h4>
+                            <div class="metrica_valor" id="total-ingresos">$0</div>
+                        </div>
+                    </div>
+                    <div class="metrica_card">
+                        <div class="metrica_icon">📋</div>
+                        <div class="metrica_content">
+                            <h4>Total Planillas</h4>
+                            <div class="metrica_valor" id="total-planillas">0</div>
+                        </div>
+                    </div>
+                    <div class="metrica_card">
+                        <div class="metrica_icon">🚌</div>
+                        <div class="metrica_content">
+                            <h4>Buses Utilizados</h4>
+                            <div class="metrica_valor" id="buses-utilizados">0</div>
+                        </div>
+                    </div>
+                    <div class="metrica_card">
+                        <div class="metrica_icon">👥</div>
+                        <div class="metrica_content">
+                            <h4>Conductores Activos</h4>
+                            <div class="metrica_valor" id="conductores-activos">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabla de Resultados -->
+        <section class="resultados_section">
+            <div class="resultados_container">
+                <div class="resultados_header">
+                    <h2>📊 Resultados de Consulta</h2>
+                    <div class="exportar_acciones">
+                        <button class="btn_export excel" onclick="exportarExcel()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="14,2 14,8 20,8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Excel
+                        </button>
+                        <button class="btn_export pdf" onclick="exportarPDF()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="14,2 14,8 20,8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="16" y1="13" x2="8" y2="13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="16" y1="17" x2="8" y2="17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="10,9 9,9 8,9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="tabla_container">
+                    <div id="loading-indicator" class="loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Cargando datos...</p>
+                    </div>
+                    
+                    <table id="tabla-resultados" class="tabla_planillas">
+                        <thead>
+                            <tr>
+                                <th>N° Planilla</th>
+                                <th>Fecha</th>
+                                <th>Conductor</th>
+                                <th>Asistente</th>
+                                <th>Bus</th>
+                                <th>Ruta</th>
+                                <th>Total Producción</th>
+                                <th>Total Egresos</th>
+                                <th>Ganancia Neta</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-body">
+                            <!-- Los datos se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
+                    
+                    <div id="no-data" class="no-data" style="display: none;">
+                        <p>📋 No hay datos para mostrar con los filtros seleccionados</p>
+                    </div>
+                </div>
+                
+                <!-- Controles de Paginación -->
+                <div id="paginacion-container" class="paginacion-container" style="display: none;">
+                    <div class="paginacion-info">
+                        <span id="info-registros">Mostrando registros</span>
+                    </div>
+                    <div class="paginacion-botones" id="paginacion-botones">
+                        <!-- Los botones se generan dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{% static 'assets/js/script_consultas.js' %}"></script>
+    <script>
+        // Funciones de navegación
+        function goBack() {
+            globalThis.location.href = '/';
+        }
+
+        function logout() {
+            if (confirm('¿Está seguro que desea cerrar sesión?')) {
+                globalThis.location.href = '/logout/';
+            }
+        }
+
+        function handleKeyPress(event, action) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                if (action === 'back') goBack();
+                if (action === 'logout') logout();
+            }
+        }
+    </script>
+</body>
+</html>
